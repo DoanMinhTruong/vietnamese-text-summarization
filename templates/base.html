@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" href="{{url_for('static', filename='bootstrap/css/bootstrap.min.css')}}" />
+    <script src="{{url_for('static', filename='jquery/jquery-3.6.0.slim.min.js')}}"></script>
+    <script src="{{url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <title>Đồ án cuối kỳ NLP</title>
+    <script>
+        localStorage.removeItem('summarized');
+    </script>
+    <style>
+        header,footer{background-image: linear-gradient(216deg, rgba(77, 77, 77,0.05) 0%, rgba(77, 77, 77,0.05) 25%,rgba(42, 42, 42,0.05) 25%, rgba(42, 42, 42,0.05) 38%,rgba(223, 223, 223,0.05) 38%, rgba(223, 223, 223,0.05) 75%,rgba(36, 36, 36,0.05) 75%, rgba(36, 36, 36,0.05) 100%),linear-gradient(44deg, rgba(128, 128, 128,0.05) 0%, rgba(128, 128, 128,0.05) 34%,rgba(212, 212, 212,0.05) 34%, rgba(212, 212, 212,0.05) 57%,rgba(25, 25, 25,0.05) 57%, rgba(25, 25, 25,0.05) 89%,rgba(135, 135, 135,0.05) 89%, rgba(135, 135, 135,0.05) 100%),linear-gradient(241deg, rgba(55, 55, 55,0.05) 0%, rgba(55, 55, 55,0.05) 14%,rgba(209, 209, 209,0.05) 14%, rgba(209, 209, 209,0.05) 60%,rgba(245, 245, 245,0.05) 60%, rgba(245, 245, 245,0.05) 69%,rgba(164, 164, 164,0.05) 69%, rgba(164, 164, 164,0.05) 100%),linear-gradient(249deg, rgba(248, 248, 248,0.05) 0%, rgba(248, 248, 248,0.05) 32%,rgba(148, 148, 148,0.05) 32%, rgba(148, 148, 148,0.05) 35%,rgba(202, 202, 202,0.05) 35%, rgba(202, 202, 202,0.05) 51%,rgba(181, 181, 181,0.05) 51%, rgba(181, 181, 181,0.05) 100%),linear-gradient(92deg, hsl(214,0%,11%),hsl(214,0%,11%));}
+        #main{
+            background-image: linear-gradient(88deg, rgba(202, 202, 202,0.02) 0%, rgba(202, 202, 202,0.02) 58%,transparent 58%, transparent 67%,rgba(220, 220, 220,0.02) 67%, rgba(220, 220, 220,0.02) 82%,rgba(8, 8, 8,0.02) 82%, rgba(8, 8, 8,0.02) 100%),linear-gradient(318deg, rgba(19, 19, 19,0.02) 0%, rgba(19, 19, 19,0.02) 5%,transparent 5%, transparent 50%,rgba(101, 101, 101,0.02) 50%, rgba(101, 101, 101,0.02) 65%,rgba(132, 132, 132,0.02) 65%, rgba(132, 132, 132,0.02) 100%),linear-gradient(150deg, rgba(166, 166, 166,0.02) 0%, rgba(166, 166, 166,0.02) 18%,transparent 18%, transparent 37%,rgba(105, 105, 105,0.02) 37%, rgba(105, 105, 105,0.02) 87%,rgba(244, 244, 244,0.02) 87%, rgba(244, 244, 244,0.02) 100%),linear-gradient(53deg, rgba(54, 54, 54,0.02) 0%, rgba(54, 54, 54,0.02) 26%,transparent 26%, transparent 81%,rgba(251, 251, 251,0.02) 81%, rgba(251, 251, 251,0.02) 85%,rgba(19, 19, 19,0.02) 85%, rgba(19, 19, 19,0.02) 100%),linear-gradient(90deg, rgb(255,255,255),rgb(255,255,255));
+        }
+        #info > li{
+            list-style-type: none;
+            margin: 0 50px;
+            padding: 5px;
+            border: solid white 1px;
+            border-radius: 15px 50px 30px;
+            font-size: 18px;
+            background-image: radial-gradient(circle at 11% 37%, hsla(251,0%,28%,0.05) 0%, hsla(251,0%,28%,0.05) 50%,transparent 50%, transparent 56%,transparent 56%, transparent 100%),radial-gradient(circle at 82% 7%, hsla(251,0%,28%,0.05) 0%, hsla(251,0%,28%,0.05) 46%,transparent 46%, transparent 88%,transparent 88%, transparent 100%),radial-gradient(circle at 81% 79%, hsla(251,0%,28%,0.05) 0%, hsla(251,0%,28%,0.05) 33%,transparent 33%, transparent 89%,transparent 89%, transparent 100%),radial-gradient(circle at 68% 96%, hsla(251,0%,28%,0.05) 0%, hsla(251,0%,28%,0.05) 8%,transparent 8%, transparent 26%,transparent 26%, transparent 100%),radial-gradient(circle at 69% 20%, hsla(251,0%,28%,0.05) 0%, hsla(251,0%,28%,0.05) 84%,transparent 84%, transparent 86%,transparent 86%, transparent 100%),radial-gradient(circle at 49% 22%, hsla(251,0%,28%,0.05) 0%, hsla(251,0%,28%,0.05) 71%,transparent 71%, transparent 78%,transparent 78%, transparent 100%),radial-gradient(circle at 23% 60%, hsla(251,0%,28%,0.05) 0%, hsla(251,0%,28%,0.05) 6%,transparent 6%, transparent 40%,transparent 40%, transparent 100%),radial-gradient(circle at 86% 33%, hsla(251,0%,28%,0.05) 0%, hsla(251,0%,28%,0.05) 13%,transparent 13%, transparent 98%,transparent 98%, transparent 100%),radial-gradient(circle at 38% 60%, hsla(251,0%,28%,0.05) 0%, hsla(251,0%,28%,0.05) 15%,transparent 15%, transparent 61%,transparent 61%, transparent 100%),linear-gradient(0deg, hsl(167,0%,6%),hsl(167,0%,6%));
+        }
+        .in_im{
+            height:72px;
+            width: auto;
+            border-radius: 50%;
+            transition: all .25s ease-in;
+            /* position: absolute; */
+        }
+        .navbar-brand > img{
+            height: 55px;
+        }
+        #title{
+            font-size: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="container-fluid justify-content-center" style="padding: 0;">
+        <nav class="navbar navbar-expand-lg  ">
+            <a class="navbar-brand" href="#"><img height="47px" src="https://scontent.fsgn2-1.fna.fbcdn.net/v/t1.6435-9/44060649_273413276694945_2459900286370578432_n.jpg?_nc_cat=105&ccb=1-6&_nc_sid=09cbfe&_nc_ohc=Pq-r7bearukAX9npUgV&_nc_ht=scontent.fsgn2-1.fna&oh=00_AT8ALpQELXB6rQ31oD_eSF7nCUoxd09WEDlEGlmeFMyqwQ&oe=62A5671D" alt=""></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" style="font-size:15px;" href="/"><strong> DINOSAUR Team - Industrial University of Ho Chi Minh City</strong> <span class="sr-only">(current)</span></a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="/bert">BERT + KMeans<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/word2vec">Word2Vec + KMeans<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/score">Score<span class="sr-only">(current)</span></a>
+                    </li> -->
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <div id="main">
+        <div class="container-fluid" style="padding: 0; margin-top: 10px;">
+            <div id="title" class="row mt-3 justify-content-center">
+                <strong>VIETNAMESE TEXT SUMMARIZATION</strong>
+            </div>
+        </div>
+        <div class="container-fluid" style="padding: 0;">
+            {% block main %}
+            {% endblock %}
+        </div>
+    </div>
+    <footer style="padding: 15px 0; margin-top: 30px;">
+        <ul id="info" class="row mt-4 text-white justify-content-center">
+            <li class="nav-item col-md-3 p-3">
+                <div class="row">
+                    <div class="col-md pl-4">
+                        <img  class="in_im" src="https://scontent.fsgn2-6.fna.fbcdn.net/v/t39.30808-1/279822423_1955790247939676_637800968129082426_n.jpg?stp=dst-jpg_p240x240&_nc_cat=100&ccb=1-6&_nc_sid=7206a8&_nc_ohc=6dOxIqiXB1sAX-6kO4t&tn=xq-uiOUGOMp42TBT&_nc_ht=scontent.fsgn2-6.fna&oh=00_AT_ljHXqcCflSewyJ3oxf5Opn1Yh2S23g7V-FMGfuf8w3g&oe=6285D3C9" alt="">
+                    </div>
+                    <div class="col-md-8 border-left border-white h-4 p-2">
+                        <div id="name">
+                            Đoàn Minh Trường
+                        </div>
+                        <div id="mssv">
+                            19519011
+                        </div>
+                    </div>
+                </div>
+            </li>
+           
+            <li class="nav-item col-md-3 p-3">
+                <div class="row">
+                    <div class="col-md pl-4">
+                        <img  class="in_im" src="https://scontent.fsgn2-1.fna.fbcdn.net/v/t1.6435-9/176734274_1023851254687550_5059750750427532314_n.jpg?_nc_cat=111&ccb=1-6&_nc_sid=09cbfe&_nc_ohc=isObb1oAR_wAX_V2Np7&_nc_ht=scontent.fsgn2-1.fna&oh=00_AT_Fw7OzysPk3pFPdmE_UfYQ1ev7BtZIRXxjWN29MRsOzQ&oe=62A45E4C" alt="">
+                    </div>
+                    <div class="col-md-8 border-left border-white h-4 p-2">
+                        <div id="name">
+                            Lê Thanh Phong
+                        </div>
+                        <div id="mssv">
+                            19474281
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item col-md-3 p-3">
+                <div class="row">
+                    <div class="col-md pl-4">
+                        <img  class="in_im" src="https://scontent.fsgn2-1.fna.fbcdn.net/v/t39.30808-6/278320244_562781068745403_638882449685720937_n.jpg?_nc_cat=111&ccb=1-6&_nc_sid=174925&_nc_ohc=CamlJzvEKpAAX_lSrRk&_nc_ht=scontent.fsgn2-1.fna&oh=00_AT_uHjnr6iMqviG1w72B77qDOjmEwZJFspMDpAdsijZdfA&oe=6286166E" alt="">
+                    </div>
+                    <div class="col-md-8 border-left border-white h-4 p-2">
+                        <div id="name">
+                            Trần Tuấn Vũ
+                        </div>
+                        <div id="mssv">
+                            19475611
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </footer>
+</body>
+
+</html>
